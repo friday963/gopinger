@@ -15,3 +15,5 @@ COPY . .
 RUN go build . 
 
 CMD ["./ping_destination"]
+
+# Create a layered image to cut down on the size of the build.
