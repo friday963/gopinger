@@ -1,19 +1,11 @@
-FROM golang:rc-alpine3.13
+FROM golang:1.16 AS builder
 
-RUN apk add --no-cache git
-RUN apk add build-base
+ADD . /src
 
-WORKDIR /app/pinger
+RUN cd /src && go build -o goapp 
 
-COPY go.mod .
-COPY go.sum .
-
-RUN go mod download
-
-COPY . .
-
-RUN go build . 
-
-CMD ["./ping_destination"]
-
+FROM debian:buster-slim
+WORKDIR /app 
+COPY --from=builder /src/goapp /app/
+ENTRYPOINT [ "./goapp" ] 
 # Create a layered image to cut down on the size of the build.
